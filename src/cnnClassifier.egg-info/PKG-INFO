@@ -6,24 +6,26 @@ Home-page: https://github.com/author/name
 Author: Pavani kusuma
 Author-email: pavanikusuma2020@gmail.com
 Project-URL: Bug Tracker, https://github.com/pavani/kidney_disease_classification/issues
-Requires-Dist: tensorflow==2.12.0
+Requires-Dist: tensorflow[and-cuda]
 Requires-Dist: pandas
 Requires-Dist: dvc
-Requires-Dist: mlflow==2.2.2
+Requires-Dist: ipykernel
+Requires-Dist: mlflow
 Requires-Dist: notebook
 Requires-Dist: numpy
 Requires-Dist: matplotlib
 Requires-Dist: seaborn
-Requires-Dist: python-box==6.0.2
+Requires-Dist: python-box
 Requires-Dist: pyYaml
 Requires-Dist: tqdm
-Requires-Dist: ensure==1.0.2
+Requires-Dist: ensure
 Requires-Dist: joblib
 Requires-Dist: types-PyYaml
 Requires-Dist: scipy
 Requires-Dist: Flask
 Requires-Dist: Flask-cors
 Requires-Dist: gdown
+Requires-Dist: python-dotenv
 Dynamic: author
 Dynamic: author-email
 Dynamic: home-page

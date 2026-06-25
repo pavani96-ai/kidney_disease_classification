@@ -1,183 +1,148 @@
-# Kidney-Disease-Classification-MLflow-DVC
+# Kidney Disease Classification Pipeline (End-to-End Deep Learning) 🔬
 
+## 📝 Project Overview
+This project delivers a production-grade, End-to-End Deep Learning and MLOps solution designed to assist medical professionals in classifying kidney conditions from medical imaging. The architecture is built as a multi-class classifier capable of accurately detecting abnormalities such as **Tumors, Stones, and Normal** kidney structures. 
 
-## Workflows
+Moving beyond isolated notebook scripts, this repository follows a clean, decoupled package structure, implements full data and pipeline version control, integrates remote experiment tracking, and packages the model into a containerized API ready for automated cloud deployment.
 
-1. Update config.yaml
-2. Update  .env [Optional]
-3. Update params.yaml
-4. Update the entity
-5. Update the configuration manager in src config
-6. Update the components
-7. Update the pipeline 
-8. Update the main.py
-9. Update the dvc.yaml
-10. app.py
+---
 
-# How to run?
-### STEPS:
+## ⚙️ ML Pipeline Workflow
+The project follows a highly structured, step-by-step modular architecture:
 
-Clone the repository
+1. **Data Ingestion**: 
+   * Automates the retrieval of medical imaging datasets and manages local artifact storage structures.
+   * Performs a structured split to create distinct Training, Validation, and Test sets.
+2. **Data Transformation (Preparation)**: 
+   * Implements preprocessing layers including pixel normalization, input scaling, and resizing to match model graph expectations.
+   * Performs real-time training data augmentation to prevent overfitting.
+3. **Model Training (Transfer Learning)**: 
+   * Loads a pre-trained, lightweight **MobileNet** backbone and appends custom dense, dropout, and Softmax classification layers.
+   * Compiles and fine-tunes the network using optimized hyperparameters managed via centralized configuration files (`config/params.yaml`).
+4. **Model Evaluation & Remote Tracking**:
+   * Evaluates the fine-tuned model against validation sets, calculating strict performance metrics (Accuracy, Loss, Precision, Recall, and F1-Score).
+   * Streams training logs, metrics, hyperparameter structures, and final model weights directly to a remote **MLflow** registry hosted via **DagsHub**.
+5. **Deployment**:
+   * Wraps the finalized model components inside a high-throughput **FastAPI** web endpoint framework configured to accept file uploads (medical images) and return prediction arrays in a clean tabular format.
+   * Deployed systematically onto an **AWS EC2** instance via Docker containers, utilizing a dedicated **AWS IAM User** with fine-grained access policies to securely push artifacts to **AWS S3** and Docker images to **AWS ECR**.
 
-```bash
-https://github.com/pavani96-ai/Kidney-Disease-Classification-Deep-Learning-Project
-```
-### STEP 01- Create a conda environment after opening the repository
+---
 
-```bash
-conda create -n cnncls python=3.8 -y
-```
+## 🛠️ Step-by-Step Development Workflow
+To modify, scale, or add new components to this pipeline, follow this strict 10-step engineering workflow:
 
-```bash
-conda activate cnncls
-```
+1. **Update `config/config.yaml`**: Define the base data paths and directory configurations for the stage.
+2. **Update `.env` [Optional]**: Configure environment variables, database keys, or remote access tokens securely.
+3. **Update `config/params.yaml`**: Centralize architectural parameters and hyperparameter constants (epochs, batch size, learning rate).
+4. **Update the Entity**: Define type-safe configuration dataclasses inside `src/kidney_disease_classification/entity`.
+5. **Update the Configuration Manager**: Add relevant component configuration methods inside `src/kidney_disease_classification/config/configuration.py`.
+6. **Update the Components**: Implement the operational Python code (e.g., Ingestion, Transformation, Trainer) inside `src/kidney_disease_classification/components`.
+7. **Update the Pipeline**: Chain components together into execution routines within `src/kidney_disease_classification/pipeline`.
+8. **Update `main.py`**: Add execution triggers to expose the step to the global orchestration loop.
+9. **Update `dvc.yaml`**: Define the stage inputs, outputs, parameters, and commands to preserve step caching and complete pipeline repeatability.
+10. **Update `app.py`**: Expose inference logic or updated payload structures to the production **FastAPI** application endpoints.
 
+---
 
-### STEP 02- install the requirements
-```bash
+## 📊 Accomplishments & Experimental Results
+- **Champion Architecture**: Built upon a **MobileNet Transfer Learning** framework for lightweight, efficient, and highly accurate edge or cloud inference.
+- **Evaluation Metrics**: Achieved a stellar **Validation Accuracy of 97%** and a matching **F1-Score of 0.97**.
+- **MLOps Maturity**:
+  - Full dataset tracking and tracking variations handled via **DVC (Data Version Control)** to eliminate data sync issues.
+  - Pushes final deep learning model `.h5`/`.keras` binaries and image preprocessor artifacts directly to an **AWS S3 Bucket** backup layer.
+  - Automates infrastructure container storage using **AWS ECR (Elastic Container Registry)**.
+  - Implements fully automated CI/CD code updates through **GitHub Actions Runners** powered by secure IAM-backed repository secrets and `.env` runtime configurations on an **AWS EC2** instance.
+
+---
+
+## 🛠️ Tech Stack
+* **Language**: Python 3.10+
+* **Deep Learning Frameworks**: TensorFlow, Keras
+* **Data & Image Processing**: OpenCV, NumPy, Pandas, Matplotlib
+* **MLOps / DevOps**: DVC, MLflow, DagsHub, Docker, GitHub Actions, Git
+* **Cloud Infrastructure**: AWS (EC2, ECR, S3, IAM)
+* **API Development**: FastAPI, Uvicorn
+* **Configuration Management**: YAML (`pyyaml`)
+
+---
+
+## 📂 Repository Structure
+```text
+.
+├── .github/workflows/  # GitHub Actions CI/CD workflows
+├── artifacts/          # Images, preprocessed arrays, and weights (Tracked via DVC)
+├── config/             # Centralized configurations (config.yaml, params.yaml)
+├── research/           # Jupyter notebooks for model prototyping and EDA
+├── src/                # Modular source code package root
+│   └── kidney_disease_classification/
+│       ├── components/ # Pipeline steps (Ingestion, Transformation, Trainer, Evaluation)
+│       ├── entity/     # Type-safe configuration and artifact tracking entities
+│       ├── pipeline/   # Orchestration loops (Training and Prediction triggers)
+│       └── utils/      # Common utilities (logging, exceptions, model saving helpers)
+├── app.py              # FastAPI file-upload and tabular prediction API server entry point
+├── main.py             # Global execution script to run the full pipeline
+├── requirements.txt    # Project Python dependencies
+├── setup.py            # Packaging script for local module installation
+└── Dockerfile          # Production-grade Docker container setup
+
+🚀 Getting Started
+1. Clone the Repository
+Bash
+git clone [https://github.com/pavani96-ai/kidney_disease_classification.git](https://github.com/pavani96-ai/kidney_disease_classification.git)
+cd kidney_disease_classification
+
+2. Install Environment Dependencies
+We use Conda to guarantee runtime binary isolation. Run these commands within your terminal:
+Bash
+# Create the environment path
+conda create -p venv python=3.10 -y
+# Activate the local virtual environment
+conda activate ./venv
+# Install dependencies
 pip install -r requirements.txt
-```
 
-```bash
-# Finally run the following command
-python app.py
-```
+3. Environment Configuration
+* Create a secure configuration file named .env in the project root directory. Fill out the variable footprints exactly using your personal developer credentials:
 
-Now,
-```bash
-open up you local host and port
-```
+  Code snippet
+  DAGSHUB_TOKEN="your_dagshub_secret_app_token"
+  MLFLOW_TRACKING_URI="your_dagshub_mlflow_url"
+  MLFLOW_TRACKING_USERNAME="pavani96-ai"
+  MLFLOW_TRACKING_PASSWORD="your_dagshub_secret_app_token"
+⚠️ Note: Never commit your finished .env file to public branches. It is ignored by Git by default.
 
+4. Fetch Versioned Assets
+*  Synchronize your workspace data features and model weights directly from your remote data vault layout:
+  Bash
+  dvc pull
 
+5. Run the End-to-End Pipeline
+* To trigger ingestion, transformation, training, and remote MLflow experiment logging sequentially:
 
+ Bash
+ python main.py
 
+6. Start the Local FastAPI Server
+ Bash
+ uvicorn app:app --host 0.0.0.0 --port 8080
+ Open http://localhost:8080/docs in your browser to interactively upload test images and receive classification predictions instantly via the Swagger UI interface.
 
+🐳 Containerization & Cloud Deployment
+* To execute your production application wrapper locally under a matching container ecosystem environment:
+  Bash
+  # Build the Docker Image package
+  docker build -t kidney-disease-classifier:latest .
+  # Run the Containerized API with environment contexts mapped
+  docker run -p 8080:8080 --env-file .env kidney-disease-classifier:latest
 
-## MLflow
+7.Continuous Delivery & Security Architecture
+* Merging updates directly into your production main branch immediately invokes an automated GitHub Actions runner flow.
+* The automated pipeline securely accesses AWS resources using an AWS IAM User key configuration saved securely within GitHub Secrets to perform the following actions:
+* Runs code sanity checks and validation tests.
+* Builds a production-grade Docker container footprint.
+* Publishes the validated application build directly into your AWS ECR instance registry.
+* Backs up the training metadata and final generated model binaries to your dedicated AWS S3 Bucket.
+* Automatically issues image refresh commands over to your target cloud AWS EC2 instance host to complete the zero-downtime update.
 
-- [Documentation](https://mlflow.org/docs/latest/index.html)
-
-- [MLflow tutorial](https://youtu.be/qdcHHrsXA48?si=bD5vDS60akNphkem)
-
-##### cmd
-- mlflow ui
-
-### dagshub
-[dagshub](https://dagshub.com/)
-
-MLFLOW_TRACKING_URI=https://dagshub.com/entbappy/Kidney-Disease-Classification-MLflow-DVC.mlflow \
-MLFLOW_TRACKING_USERNAME=entbappy \
-MLFLOW_TRACKING_PASSWORD=6824692c47a369aa6f9eac5b10041d5c8edbcef0 \
-python script.py
-
-Run this to export as env variables:
-
-```bash
-
-export MLFLOW_TRACKING_URI=https://dagshub.com/entbappy/Kidney-Disease-Classification-MLflow-DVC.mlflow
-
-export MLFLOW_TRACKING_USERNAME=entbappy 
-
-export MLFLOW_TRACKING_PASSWORD=6824692c47a369aa6f9eac5b10041d5c8edbcef0
-
-```
-
-
-### DVC cmd
-
-1. dvc init
-2. dvc repro
-3. dvc dag
-
-
-## About MLflow & DVC
-
-MLflow
-
- - Its Production Grade
- - Trace all of your expriements
- - Logging & taging your model
-
-
-DVC 
-
- - Its very lite weight for POC only
- - lite weight expriements tracker
- - It can perform Orchestration (Creating Pipelines)
-
-
-
-# AWS-CICD-Deployment-with-Github-Actions
-
-## 1. Login to AWS console.
-
-## 2. Create IAM user for deployment
-
-	#with specific access
-
-	1. EC2 access : It is virtual machine
-
-	2. ECR: Elastic Container registry to save your docker image in aws
-
-
-	#Description: About the deployment
-
-	1. Build docker image of the source code
-
-	2. Push your docker image to ECR
-
-	3. Launch Your EC2 
-
-	4. Pull Your image from ECR in EC2
-
-	5. Lauch your docker image in EC2
-
-	#Policy:
-
-	1. AmazonEC2ContainerRegistryFullAccess
-
-	2. AmazonEC2FullAccess
-
-	
-## 3. Create ECR repo to store/save docker image
-    - Save the URI: 566373416292.dkr.ecr.us-east-1.amazonaws.com/chicken
-
-	
-## 4. Create EC2 machine (Ubuntu) 
-
-## 5. Open EC2 and Install docker in EC2 Machine:
-	
-	
-	#optinal
-
-	sudo apt-get update -y
-
-	sudo apt-get upgrade
-	
-	#required
-
-	curl -fsSL https://get.docker.com -o get-docker.sh
-
-	sudo sh get-docker.sh
-
-	sudo usermod -aG docker ubuntu
-
-	newgrp docker
-	
-# 6. Configure EC2 as self-hosted runner:
-    setting>actions>runner>new self hosted runner> choose os> then run command one by one
-
-
-# 7. Setup github secrets:
-
-    AWS_ACCESS_KEY_ID=
-
-    AWS_SECRET_ACCESS_KEY=
-
-    AWS_REGION = us-east-1
-
-    AWS_ECR_LOGIN_URI = demo>>  566373416292.dkr.ecr.ap-south-1.amazonaws.com
-
-    ECR_REPOSITORY_NAME = simple-app
 
 

@@ -17,3 +17,9 @@ training:
   training_data: artifacts/data_ingestion/CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone/CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone
 
 
+model_evaluation:
+  root_dir: artifacts/model_evaluation
+  path_of_model: artifacts/training/model.keras
+  training_data: artifacts/data_ingestion/CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone/CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone
+  valid_score: artifacts/model_evaluation/scores.json
+  

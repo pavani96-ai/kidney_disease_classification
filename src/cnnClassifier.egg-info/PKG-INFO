@@ -7,6 +7,7 @@ Author: Pavani kusuma
 Author-email: pavanikusuma2020@gmail.com
 Project-URL: Bug Tracker, https://github.com/pavani/kidney_disease_classification/issues
 Requires-Dist: tensorflow[and-cuda]
+Requires-Dist: dagshub
 Requires-Dist: pandas
 Requires-Dist: dvc
 Requires-Dist: ipykernel

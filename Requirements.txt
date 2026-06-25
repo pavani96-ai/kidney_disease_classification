@@ -1,5 +1,5 @@
 tensorflow[and-cuda]
-
+dagshub
 pandas
 dvc
 ipykernel

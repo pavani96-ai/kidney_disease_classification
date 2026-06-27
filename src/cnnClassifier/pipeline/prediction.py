@@ -6,7 +6,7 @@ import os
 class PredictionPipeline:
     def __init__(self,filename):
         self.filename = filename
-        self.model = load_model("artifacts/training/model.keras")
+        self.model = load_model("model/model.keras")
         
         
     def predict(self):

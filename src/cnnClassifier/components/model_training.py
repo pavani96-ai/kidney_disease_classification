@@ -161,6 +161,6 @@ class Training:
         
         # 5. Save the final model
         self.save_model(path=self.config.trained_model_path, model=self.model)
-
+        self.save_model(path='model', model=self.model)
         
 

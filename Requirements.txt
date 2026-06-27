@@ -19,5 +19,5 @@ scipy
 Flask
 Flask-cors
 gdown
--e .
+
 python-dotenv

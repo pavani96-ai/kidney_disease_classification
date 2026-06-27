@@ -1,0 +1,63 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - deeplearning
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to container registry
+        uses: docker/login-action@v2
+        with:
+          registry: deeplearning.azurecr.io/
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_301B3F8D0DE44FF4901FE1855709D12E }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_EADEB379A95140389F9FBBE05B1BB259 }}
+
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: deeplearning.azurecr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_301B3F8D0DE44FF4901FE1855709D12E }}/deeplearning:${{ github.sha }}
+          file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
+    needs: build
+    
+    steps:
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_DC6E089A87E147D58EBC697FA38D9FD3 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_93172C41E7384553921E3CE9B0E7249E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C9C71BEAEE44411E99936947246F89D4 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'deeplearning'
+          slot-name: 'Production'
+          images: 'deeplearning.azurecr.io/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_301B3F8D0DE44FF4901FE1855709D12E }}/deeplearning:${{ github.sha }}'
+          
